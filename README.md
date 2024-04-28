@@ -1,4 +1,4 @@
-# Project4: Social Network
+# Social Network
 
 This is a social network web application built using Django, a Python web framework.
 
