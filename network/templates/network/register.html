@@ -1,0 +1,65 @@
+{% extends "network/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+
+    {% if message %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endif %}
+
+    <p class="fs-2 fw-light mb-3 p-2">Register</p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-12">
+                <form action="{% url 'register' %}" method="post" class="text-secondary">
+                    {% csrf_token %}
+                    <div class="mb-2 px-3">
+                        <label for="usernameField" class="form-label">Username</label>
+                        <input class="form-control" id="usernameField" type="text" name="username" 
+                        autofocus required value="{{ username }}">
+                    </div>
+                    <div class="row mb-2 px-3">
+                        <div class="col">
+                            <label for="fnameField" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="fnameField" name="first_name" 
+                            required value="{{ first_name }}">
+                        </div>
+                        <div class="col">
+                            <label for="lnameField" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lnameField" name="last_name" 
+                            required value="{{ last_name }}">
+                        </div>
+                    </div>
+                    <div class="mb-2 px-3">
+                        <label for="emailField" class="form-label">Email</label>
+                        <input class="form-control" id="emailField" type="email" name="email" 
+                        required value="{{ email }}">
+                    </div>
+                    <div class="mb-2 px-3">
+                        <label for="pwdField" class="form-label">Password</label>
+                        <input class="form-control" id="pwdField" type="password" name="password" required>
+                    </div>
+                    <div class="mb-2 px-3">
+                        <label for="confirmPwdField" class="form-label">Confirm Password</label>
+                        <input class="form-control" id="confirmPwdField" type="password" name="confirmation" required>
+                    </div>
+                    <input class="btn btn-primary ms-3 mt-2" type="submit" value="Register">
+                </form>
+                <p class="fw-light ms-3 mt-2">
+                    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+                </p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img src="{% static 'network/images/welcome.png' %}" class="img-fluid" 
+                style="max-height: 600px; margin-top: -50px;" alt="welcome_img">
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

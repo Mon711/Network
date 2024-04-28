@@ -1,0 +1,116 @@
+{% extends "network/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+
+    <!-- Check if the profile being viewed belongs to the signed-in user -->
+    {% if is_own_profile %}
+        <p class="fs-2 fw-light mb-3 p-2"><strong class="text-decoration-underline">Your</strong> Profile Page</p>
+    {% else %}
+        <p class="fs-2 fw-light mb-3 p-2">{{ profile_user.first_name }}'s Profile Page</p>
+    {% endif %}
+
+    <div class="card mb-3 border-info mx-5">
+        <div class="row g-0 d-flex align-items-center">
+            <div class="col-md-4">
+                <img src="{% static 'network/images/profile_pic.png' %}" 
+                class="img-fluid rounded-start" alt="profile_pic">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h4 class="card-title">User Bio</h4>
+                    <p class="card-text">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>First Name: </strong>{{ profile_user.first_name }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Last Name: </strong>{{ profile_user.last_name }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Username: </strong>{{ profile_user.username }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Followers: </strong>{{ profile_user.followers.count }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Following: </strong>{{ profile_user.following.count }}
+                            </li>
+                        </ul>
+                    </p>
+                    {% if user.is_authenticated and not is_own_profile %}
+                        {% if is_following %}
+                            <a href="{% url 'follow_user' profile_user.username %}" class="btn btn-primary btn-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                    <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                </svg>
+                                Unfollow
+                            </a>
+                        {% else %}
+                            <a href="{% url 'follow_user' profile_user.username %}" class="btn btn-outline-primary btn-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                    <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                </svg>
+                                Follow
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <hr class="border border-2 border-black rounded-pill w-75" style="margin: 75px auto;">
+    
+
+    {% if is_own_profile %}
+        <p class="fs-2 fw-light ps-2 mt-4">Posts by <strong class="text-decoration-underline">you</strong></p>
+    {% else %}
+        <p class="fs-2 fw-light ps-2 mt-4">Posts by {{ profile_user.first_name }}</p>
+    {% endif %}
+
+    <div class="container">
+        <!-- Check if atleast one post made by user -->
+        {% if posts %}
+            {% for post in posts %}
+                <div class="container border border-primary 
+                border-1 rounded bg-dark-subtle text-emphasis-dark mb-5">
+                    <a href="{% url 'profile' username=post.poster.username %}">
+                        <p class="fw-bold mt-3 text-decoration-underline">{{ post.poster }}</p>
+                    </a>
+                    <p class="fs-5 fw-normal" id="post-{{ post.id }}">{{ post.content }}</p>
+                    <p class="text-end text-body-tertiary mb-1 me-2">{{ post.created_at }}</p>
+                    {% if user.is_authenticated %}
+                        <div class="d-flex align-items-center">
+                            {% if user in post.likes.all %}
+                                <button class="like-btn btn btn-primary btn-sm mb-3" id="like-btn-{{ post.id }}">Unlike</button>
+                            {% else %}
+                                <button class="like-btn btn btn-outline-primary btn-sm mb-3" id="like-btn-{{ post.id }}">Like</button>
+                            {% endif %}
+                            <span class="like-count ms-1 pb-3 text-secondary" id="like-count-{{ post.id }}">{{ post.likes.count }}</span>
+                        {% if post.poster == request.user %}
+                            <button id="edit-btn-{{ post.id }}" class="edit-btn btn btn-outline-dark btn-sm mb-3 ms-2">Edit</button>
+                            <button id="save-btn-{{ post.id }}" class="save-btn btn btn-outline-success btn-sm mb-3 d-none">Save</button>
+                            <button id="cancel-btn-{{ post.id }}" class="cancel-btn btn btn-outline-secondary btn-sm mb-3 ms-1 d-none">Cancel</button>
+                        </div>
+                        {% else %}
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="container text-center mt-5">
+                <p class="lead text-muted">No posts have been made by this user yet.</p>
+            </div>
+        {% endif %}
+                
+    </div>
+
+
+
+{% endblock %}

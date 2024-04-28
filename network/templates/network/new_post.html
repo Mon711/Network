@@ -1,0 +1,28 @@
+{% extends "network/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+
+    <p class="fs-2 fw-light mb-3 p-2">New Post</p>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-12 mt-4">
+                <form action="{% url 'new-post' %}" method="post" class="text-secondary">
+                    {% csrf_token %}
+                    <div class="mb-1 p-3">
+                        <label for="newPostField" class="form-label fs-3 fw-light">Publish a Post</label>
+                        <textarea name="content" class="form-control" id="newPostField" rows="3" 
+                        placeholder="Write Post content here..... " style="height: 150px;" autofocus required></textarea>
+                    </div>
+                    <input class="btn btn-primary ms-3" type="submit" value="Publish">
+                </form>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img src="{% static 'network/images/new_post.png' %}" 
+                class="img-fluid" alt="new_post_img" style="margin-top: 50px;">
+            </div>
+        </div>
+    </div>
+{% endblock %}
